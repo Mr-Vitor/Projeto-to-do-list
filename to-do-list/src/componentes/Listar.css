@@ -164,3 +164,6 @@ li button {
 li button:hover {
     background-color: #1e7e34;
 }
+.reset{
+    margin: 10px;
+}
