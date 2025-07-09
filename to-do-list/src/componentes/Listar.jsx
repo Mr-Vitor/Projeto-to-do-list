@@ -7,6 +7,8 @@ export default function Listar() {
     const [filtro, setFiltro] = useState('todas')
     const [lista, setLista] = useState([])
 
+    const cores = ['#FF6B6B', '#6BCB77', '#4D96FF', '#FFC75F', '#B967FF', '#FF9671']
+
     const handleSubmit = (e) => {
         e.preventDefault()
         if (!tarefa) return
@@ -15,7 +17,9 @@ export default function Listar() {
             id: Math.floor(Math.random() * 10000),
             texto: tarefa,
             prioridade: prioridade,
-            status: false
+            status: false,
+            corIndex: 0,
+            mostrarCores: false
         }
 
         setLista([...lista, novaTarefa])
@@ -43,8 +47,23 @@ export default function Listar() {
         setLista(lista.map(item =>
             item.id === id ? { ...item, prioridade: novaPrioridade } : item
         ));
-    };
+    }
 
+    const toggleMostrarCores = (id) => {
+        setLista(lista.map(item =>
+            item.id === id
+                ? { ...item, mostrarCores: !item.mostrarCores }
+                : { ...item, mostrarCores: false } // fecha os menus de outras tarefas
+        ))
+    }
+
+    const handleSelecionarCor = (id, indexCor) => {
+        setLista(lista.map(item =>
+            item.id === id
+                ? { ...item, corIndex: indexCor, mostrarCores: false }
+                : item
+        ))
+    }
 
     return (
         <div>
@@ -79,7 +98,7 @@ export default function Listar() {
                 </select>
             </div>
 
-            <button onClick={handleClear}>Reset</button>
+            <button className="reset" onClick={handleClear}>Reset</button>
 
             <ul>
                 {listaFiltrada.map((item) =>
@@ -90,16 +109,62 @@ export default function Listar() {
                             </span>
                             <span>
                                 <select
-                                value={item.prioridade}
-                                onChange={(e) => handleChangePrioridade(item.id, e.target.value)}
+                                    value={item.prioridade}
+                                    onChange={(e) => handleChangePrioridade(item.id, e.target.value)}
                                 >
-                                {prioridades.map(p => (
-                                    <option key={p} value={p}>{p}</option>
-                                ))}
+                                    {prioridades.map(p => (
+                                        <option key={p} value={p}>{p}</option>
+                                    ))}
                                 </select>
                             </span>
                         </div>
-                       
+
+                        {/* Botão que mostra o menu de cores */}
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                                onClick={() => toggleMostrarCores(item.id)}
+                                style={{
+                                    backgroundColor: cores[item.corIndex],
+                                    color: '#fff',
+                                    border: 'none',
+                                    padding: '6px 12px',
+                                    marginRight: '8px',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Cor
+                            </button>
+
+                            {item.mostrarCores && (
+                                <div style={{
+                                    position: 'absolute',
+                                    display: 'flex',
+                                    gap: '5px',
+                                    backgroundColor: '#f0f0f0',
+                                    padding: '8px',
+                                    borderRadius: '6px',
+                                    top: '40px',
+                                    zIndex: 1
+                                }}>
+                                    {cores.map((cor, index) => (
+                                        <div
+                                            key={cor}
+                                            onClick={() => handleSelecionarCor(item.id, index)}
+                                            style={{
+                                                width: '20px',
+                                                height: '20px',
+                                                borderRadius: '50%',
+                                                backgroundColor: cor,
+                                                cursor: 'pointer',
+                                                border: item.corIndex === index ? '2px solid #000' : '1px solid #ccc'
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         <button onClick={() => handleToggle(item.id)}>
                             {item.status ? 'Desmarcar' : 'Concluir'}
                         </button>
