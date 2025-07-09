@@ -20,7 +20,7 @@ export default function Listar() {
 
         setLista([...lista, novaTarefa])
         setTarefa('')
-        setPrioridade('baixo')
+        setPrioridade('Baixo')
     }
 
     const handleToggle = (id) => {
