@@ -39,6 +39,13 @@ export default function Listar() {
         return filtro === 'todas' || item.prioridade === filtro
     })
 
+    const handleChangePrioridade = (id, novaPrioridade) => {
+        setLista(lista.map(item =>
+            item.id === id ? { ...item, prioridade: novaPrioridade } : item
+        ));
+    };
+
+
     return (
         <div>
             <h2>Lista de Tarefas</h2>
@@ -82,8 +89,14 @@ export default function Listar() {
                                 <strong>{item.texto}</strong>
                             </span>
                             <span>
-                                Prioridade: {item.prioridade}
-
+                                <select
+                                value={item.prioridade}
+                                onChange={(e) => handleChangePrioridade(item.id, e.target.value)}
+                                >
+                                {prioridades.map(p => (
+                                    <option key={p} value={p}>{p}</option>
+                                ))}
+                                </select>
                             </span>
                         </div>
                        
